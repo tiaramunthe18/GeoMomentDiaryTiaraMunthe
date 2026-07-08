@@ -24,6 +24,7 @@ import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import android.widget.Toast
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -80,6 +81,12 @@ fun AddEditNoteScreen(
             pendingPhotoFile = file
             pendingPhotoUri = uri
             cameraLauncher.launch(uri)
+        } else {
+            Toast.makeText(
+                context,
+                "Izin kamera ditolak.",
+                Toast.LENGTH_SHORT
+            ).show()
         }
     }
 
@@ -110,6 +117,11 @@ fun AddEditNoteScreen(
                 address = locationHelper.getAddressFromLatLng(latitude, longitude)
             } else {
                 address = "Lokasi tidak ditemukan"
+                Toast.makeText(
+                    context,
+                    "Gagal mendapatkan lokasi. Pastikan GPS aktif.",
+                    Toast.LENGTH_LONG
+                ).show()
             }
             isLoadingLocation = false
         }
@@ -122,6 +134,11 @@ fun AddEditNoteScreen(
             fetchLocation()
         } else {
             address = "Izin lokasi ditolak"
+            Toast.makeText(
+                context,
+                "Aplikasi memerlukan izin lokasi.",
+                Toast.LENGTH_LONG
+            ).show()
         }
     }
 
@@ -207,7 +224,24 @@ fun AddEditNoteScreen(
 
             Button(
                 onClick = {
+                    if (title.isBlank()) {
+                        Toast.makeText(
+                            context,
+                            "Judul catatan tidak boleh kosong.",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        return@Button
+                    }
 
+                    if (notesText.isBlank()) {
+                        Toast.makeText(
+                            context,
+                            "Isi catatan tidak boleh kosong.",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        return@Button
+                    }
+                    
                     val currentDate = SimpleDateFormat(
                         "dd MMMM yyyy • HH:mm",
                         Locale("id", "ID")
